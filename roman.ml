@@ -113,9 +113,8 @@ end = struct
     | X_5__add_3  :: cycles -> X_10__sub_1 :: cycles
     | X_10__sub_1 :: cycles -> X_0         :: add_1 cycles
 
-  let add_n t n =
-    let rec list_init x n = if n < 1 then [] else x :: list_init x (n - 1) in
-    List.fold_left (list_init () n) ~init:t ~f:(fun t () -> add_1 t)
+  let rec add_n t n =
+    if n < 1 then t else add_n (add_1 t) (n - 1)
 end
 
 let () =

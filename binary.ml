@@ -32,9 +32,8 @@ end = struct
     | Digit.D0 :: ds -> Digit.D1 :: ds
     | Digit.D1 :: ds -> Digit.D0 :: add_1 ds
 
-  let add t n =
-    let rec list_init x n = if n < 1 then [] else x :: list_init x (n - 1) in
-    List.fold_left (list_init () n) ~init:t ~f:(fun t () -> add_1 t)
+  let rec add t n =
+    if n < 1 then t else add (add_1 t) (n - 1)
 end
 
 let () =
