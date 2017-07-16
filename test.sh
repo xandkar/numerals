@@ -5,7 +5,7 @@ binary() {
     printf "|\t---\t|\t-----\t|\t-----\t|\t-----\t|\n";
     for i in `seq 0 100`; do
         expected=$(echo "obase=2; $i" | bc);
-        computed=$(./bin/binary $i);
+        computed=$(./bin/exe/binary $i);
         printf "| $i\t|\t$expected\t|\t$computed\t|\t";
         if ! [ $expected -eq $computed ]; then
             printf "FAIL\t|\n"

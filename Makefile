@@ -1,7 +1,7 @@
 OCAMLC_OPTIONS := -w A -warn-error A
 OCAMLC_BYTE    := ocamlc.opt   $(OCAMLC_OPTIONS)
 OCAMLC_NATIVE  := ocamlopt.opt $(OCAMLC_OPTIONS)
-BINS           := arabic binary roman
+EXECUTABLES    := arabic binary roman
 
 .PHONY: \
 	build \
@@ -11,32 +11,33 @@ BINS           := arabic binary roman
 	rebuild \
 	test
 
-.INTERMEDIATE: $(foreach bin, $(BINS), $(bin).o $(bin).cmx)
+.INTERMEDIATE: \
+	$(foreach exe, $(EXECUTABLES), bin/exe/$(exe).o bin/exe/$(exe).cmx)
 
 # =============================================================================
 # Build
 # =============================================================================
 
-build: $(foreach bin, $(BINS), bin/$(bin))
+build: $(foreach exe, $(EXECUTABLES), bin/exe/$(exe))
 
 rebuild:
 	@$(MAKE) clean
 	@$(MAKE) build
 
-bin/%: %.ml %.cmx %.o bin
-	@$(OCAMLC_NATIVE) -o $@ $*.cmx
+bin/exe/%: src/exe/%.ml bin/exe/%.cmx bin/exe/%.o
+	@$(OCAMLC_NATIVE) -o $@ bin/exe/$*.cmx
 
-%.cmi: %.mli
-	@$(OCAMLC_NATIVE) -c $<
+bin/exe/%.cmi: src/exe/%.mli bin/exe
+	@$(OCAMLC_NATIVE) -o $@ -c $<
 
-%.cmx %.o: %.ml %.cmi
-	@$(OCAMLC_NATIVE) -c $<
+bin/exe/%.cmx bin/exe/%.o: src/exe/%.ml bin/exe bin/exe/%.cmi
+	@$(OCAMLC_NATIVE) -I bin/exe/ -o $@ -c $<
 
-%.cmo: %.ml %.cmi
+bin/exe/%.cmo: src/exe/%.ml bin/exe/%.cmi
 	@$(OCAMLC_BYTE) -c $<
 
-bin:
-	@mkdir -p bin
+bin/exe:
+	@mkdir -p bin/exe
 
 # =============================================================================
 # Test
@@ -44,19 +45,14 @@ bin:
 
 test: test_binary
 
-test_%: bin/%
+test_%: bin/exe/%
 	./test.sh $*
 
 # =============================================================================
 # Clean
 # =============================================================================
 
-clean: \
-	clean_bin \
-	clean_objects
+clean: clean_bin
 
 clean_bin:
 	@rm -rf bin
-
-clean_objects:
-	@rm -f {*.o,*.cm{i,x,o}}
