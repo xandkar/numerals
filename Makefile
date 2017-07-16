@@ -1,6 +1,7 @@
 OCAMLC_OPTIONS := -w A -warn-error A
 OCAMLC_BYTE    := ocamlc.opt   $(OCAMLC_OPTIONS)
 OCAMLC_NATIVE  := ocamlopt.opt $(OCAMLC_OPTIONS)
+BINS           := arabic binary roman
 
 .PHONY: \
 	build \
@@ -10,14 +11,13 @@ OCAMLC_NATIVE  := ocamlopt.opt $(OCAMLC_OPTIONS)
 	rebuild \
 	test
 
+.INTERMEDIATE: $(foreach bin, $(BINS), $(bin).o $(bin).cmx)
+
 # =============================================================================
 # Build
 # =============================================================================
 
-build: \
-	bin/arabic \
-	bin/roman \
-	bin/binary
+build: $(foreach bin, $(BINS), bin/$(bin))
 
 rebuild:
 	@$(MAKE) clean
