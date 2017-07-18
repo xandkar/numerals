@@ -25,13 +25,13 @@ rebuild:
 	@$(MAKE) build
 
 bin/exe/%: src/exe/%.ml bin/exe/%.cmx bin/exe/%.o
-	@$(OCAMLC_NATIVE) -o $@ bin/exe/$*.cmx
+	@$(OCAMLC_NATIVE) -o $@ $(@D)/$*.cmx
 
 bin/exe/%.cmi: src/exe/%.mli bin/exe
 	@$(OCAMLC_NATIVE) -o $@ -c $<
 
 bin/exe/%.cmx bin/exe/%.o: src/exe/%.ml bin/exe bin/exe/%.cmi
-	@$(OCAMLC_NATIVE) -I bin/exe/ -o $@ -c $<
+	@$(OCAMLC_NATIVE) -I $(@D) -o $@ -c $<
 
 bin/exe/%.cmo: src/exe/%.ml bin/exe/%.cmi
 	@$(OCAMLC_BYTE) -c $<
