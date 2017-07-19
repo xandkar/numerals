@@ -1,58 +1,71 @@
 OCAMLC_OPTIONS := -w A -warn-error A
 OCAMLC_BYTE    := ocamlc.opt   $(OCAMLC_OPTIONS)
 OCAMLC_NATIVE  := ocamlopt.opt $(OCAMLC_OPTIONS)
-EXECUTABLES    := arabic binary roman
+
+EXE_HOME_SRC := src/exe
+EXE_HOME_BIN := bin/exe
+
+EXE_NAMES   := arabic binary roman
+EXE_PATHS   := $(addprefix $(EXE_HOME_BIN)/,$(EXE_NAMES))
+EXE_OBJ_O   := $(addsuffix .o,$(EXE_PATHS))
+EXE_OBJ_CMX := $(addsuffix .cmx,$(EXE_PATHS))
+EXE_OBJ_CMI := $(addsuffix .cmi,$(EXE_PATHS))
 
 .PHONY: \
 	build \
 	clean \
-	clean_bin \
-	clean_objects \
 	rebuild \
 	test
 
 .INTERMEDIATE: \
-	$(foreach exe, $(EXECUTABLES), bin/exe/$(exe).o bin/exe/$(exe).cmx)
+	$(EXE_OBJ_CMI) \
+	$(EXE_OBJ_CMX) \
+	$(EXE_OBJ_O)
 
 # =============================================================================
 # Build
 # =============================================================================
 
-build: $(foreach exe, $(EXECUTABLES), bin/exe/$(exe))
+build \
+: $(EXE_PATHS)
 
-rebuild:
+rebuild :
 	@$(MAKE) clean
 	@$(MAKE) build
 
-bin/exe/%: src/exe/%.ml bin/exe/%.cmx bin/exe/%.o
+$(EXE_HOME_BIN)/% \
+: $(EXE_HOME_SRC)/%.ml $(EXE_HOME_BIN)/%.cmx $(EXE_HOME_BIN)/%.o
 	@$(OCAMLC_NATIVE) -o $@ $(@D)/$*.cmx
 
-bin/exe/%.cmi: src/exe/%.mli bin/exe
+$(EXE_HOME_BIN)/%.cmi \
+: $(EXE_HOME_SRC)/%.mli $(EXE_HOME_BIN)
 	@$(OCAMLC_NATIVE) -o $@ -c $<
 
-bin/exe/%.cmx bin/exe/%.o: src/exe/%.ml bin/exe bin/exe/%.cmi
+$(EXE_HOME_BIN)/%.cmx $(EXE_HOME_BIN)/%.o \
+: $(EXE_HOME_SRC)/%.ml $(EXE_HOME_BIN) $(EXE_HOME_BIN)/%.cmi
 	@$(OCAMLC_NATIVE) -I $(@D) -o $@ -c $<
 
-bin/exe/%.cmo: src/exe/%.ml bin/exe/%.cmi
+$(EXE_HOME_BIN)/%.cmo \
+: $(EXE_HOME_SRC)/%.ml $(EXE_HOME_BIN)/%.cmi
 	@$(OCAMLC_BYTE) -c $<
 
-bin/exe:
-	@mkdir -p bin/exe
+$(EXE_HOME_BIN) :
+	@mkdir -p $(EXE_HOME_BIN)
 
 # =============================================================================
 # Test
 # =============================================================================
 
-test: test_binary
+test \
+: test_binary
 
-test_%: bin/exe/%
+test_% \
+: $(EXE_HOME_BIN)/%
 	./test.sh $*
 
 # =============================================================================
 # Clean
 # =============================================================================
 
-clean: clean_bin
-
-clean_bin:
+clean :
 	@rm -rf bin
