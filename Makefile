@@ -1,3 +1,6 @@
+N_CPUS    := $(shell nproc 2> /dev/null || gnproc 2> /dev/null || sysctl -n hw.ncpu 2> /dev/null)
+MAKEFLAGS := -j $(N_CPUS) --no-builtin-rules
+
 OCAMLC_OPTIONS := -w A -warn-error A
 OCAMLC_BYTE    := ocamlc.opt   $(OCAMLC_OPTIONS)
 OCAMLC_NATIVE  := ocamlopt.opt $(OCAMLC_OPTIONS)
