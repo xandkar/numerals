@@ -38,11 +38,13 @@ $(EXE_HOME_BIN)/% \
 	@$(OCAMLC_NATIVE) -o $@ $(@D)/$*.cmx
 
 $(EXE_HOME_BIN)/%.cmi \
-: $(EXE_HOME_SRC)/%.mli $(EXE_HOME_BIN)
+: $(EXE_HOME_SRC)/%.mli \
+| $(EXE_HOME_BIN)
 	@$(OCAMLC_NATIVE) -o $@ -c $<
 
 $(EXE_HOME_BIN)/%.cmx $(EXE_HOME_BIN)/%.o \
-: $(EXE_HOME_SRC)/%.ml $(EXE_HOME_BIN) $(EXE_HOME_BIN)/%.cmi
+: $(EXE_HOME_SRC)/%.ml $(EXE_HOME_BIN)/%.cmi \
+| $(EXE_HOME_BIN)
 	@$(OCAMLC_NATIVE) -I $(@D) -o $@ -c $<
 
 $(EXE_HOME_BIN)/%.cmo \
