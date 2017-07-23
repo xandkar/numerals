@@ -38,4 +38,4 @@ end
 
 let () =
   let n = int_of_string Sys.argv.(1) in
-  print_endline (Number.to_string (Number.add Number.zero n))
+  Printf.printf "%s" (Number.to_string (Number.add Number.zero n))

@@ -119,4 +119,4 @@ end
 
 let () =
   let n = int_of_string Sys.argv.(1) in
-  print_endline (Number.to_string (Number.add_n Number.nil n))
+  Printf.printf "%s" (Number.to_string (Number.add_n Number.nil n))
