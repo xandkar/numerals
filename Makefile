@@ -8,7 +8,7 @@ OCAMLC_NATIVE  := ocamlopt.opt $(OCAMLC_OPTIONS)
 EXE_HOME_SRC := src/exe
 EXE_HOME_BIN := bin/exe
 
-EXE_NAMES   := arabic binary roman
+EXE_NAMES   := arabic binary roman positional
 EXE_PATHS   := $(addprefix $(EXE_HOME_BIN)/,$(EXE_NAMES))
 EXE_OBJ_O   := $(addsuffix .o,$(EXE_PATHS))
 EXE_OBJ_CMX := $(addsuffix .cmx,$(EXE_PATHS))
